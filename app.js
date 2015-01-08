@@ -4,20 +4,32 @@ var bodyParser = require('body-parser');
 var nodemailer = require('nodemailer');
 var smtpTransport = require('nodemailer-smtp-transport');
 
+/*
 var transporter = nodemailer.createTransport(smtpTransport({
 
-	host: 'smtp.atl.bluecross.ca',
-	port: 25
+host: 'smtp.mandrillapp.com',
+port: 587
 
 }));
+*/
+
+
+var transporter = nodemailer.createTransport({
+	service: "Mandrill",
+	auth: {
+		user: "herve.seger@medavie.bluecross.ca",
+		pass: "UkWTMesKpLaabWCcF3ff0g"
+	}
+});
 
 
 var mailOptions = {
 
-	from: 'justin.poirier@medavie.bluecross.ca',
-	to:  'justin.poirier@medavie.bluecross.ca',
+	from: 'noreply@medavie.bluecross.ca',
+	to:  'herve.seger@medavie.bluecross.ca',
 	subject: 'A new express email as been created',
-	html: '<b>A new express email as been created</b>'
+	html: '<b>A new express email as been created</b>',
+	headers: [{key: "X-MC-Autotext", value: "false"}, {key: "X-MC-AutoHtml", value: "false"}]
 }
 
 // create express application
@@ -27,7 +39,7 @@ app.use(bodyParser.json()); // for parsing application/json
 
 // default route.
 app.get('/', function(req, resp) {
-    resp.send("working...");
+	resp.send("working...");
 });
 
 // Get teams
@@ -46,7 +58,8 @@ app.post('/teams/:id', function(req, resp) {
 });
 
 // Create team.
-app.post('/team', function(req, resp) {
+app.post('/email', function(req, resp) {
+	console.log ("Send Email");
 
 	transporter.sendMail(mailOptions, function(error, info) {
 
@@ -78,14 +91,14 @@ app.delete('/teams/:id', function(req, resp) {
 
 // handling 404 errors
 app.use(function(err, req, res, next) {
-  res.send(err.message || '** no unicorns here **');
+	res.send(err.message || '** no unicorns here **');
 });
 
 
 var server = app.listen(3000, function() {
 
-    var host = server.address().address;
-    var port = server.address().port;
+	var host = server.address().address;
+	var port = server.address().port;
 
-    console.log('Example app listening at http://%s:%s', host, port)
+	console.log('Example app listening at http://%s:%s', host, port)
 });
