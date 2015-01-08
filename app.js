@@ -1,6 +1,24 @@
 var express = require('express');
 var http = require('http');
 var bodyParser = require('body-parser');
+var nodemailer = require('nodemailer');
+var smtpTransport = require('nodemailer-smtp-transport');
+
+var transporter = nodemailer.createTransport(smtpTransport({
+
+	host: 'smtp.atl.bluecross.ca',
+	port: 25
+
+}));
+
+
+var mailOptions = {
+
+	from: 'justin.poirier@medavie.bluecross.ca',
+	to:  'justin.poirier@medavie.bluecross.ca',
+	subject: 'A new express email as been created',
+	html: '<b>A new express email as been created</b>'
+}
 
 // create express application
 app = express();
@@ -29,8 +47,18 @@ app.post('/teams/:id', function(req, resp) {
 
 // Create team.
 app.post('/team', function(req, resp) {
-	  console.log(JSON.stringify(req.body));
-      resp.json(req.body);
+
+	transporter.sendMail(mailOptions, function(error, info) {
+
+		if (error) {
+			console.log(error);
+		} else {
+			console.log('Message sent: ' + info.response);
+			resp.json(req.body);
+		}
+
+	});
+
 });
 
 // Update team
