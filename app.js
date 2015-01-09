@@ -17,20 +17,21 @@ port: 587
 var transporter = nodemailer.createTransport({
 	service: "Mandrill",
 	auth: {
-		user: "herve.seger@medavie.bluecross.ca",
-		pass: "UkWTMesKpLaabWCcF3ff0g"
+		user: "mandrill@medavie.bluecross.ca",
+		pass: "8EhXhKQfVDh5lGp9QrtijQ"
 	}
 });
 
 
-var mailOptions = {
-
+var locals = {
 	from: 'noreply@medavie.bluecross.ca',
 	to:  'herve.seger@medavie.bluecross.ca',
 	subject: 'A new express email as been created',
-	html: '<b>A new express email as been created</b>',
-	headers: [{key: "X-MC-Autotext", value: "false"}, {key: "X-MC-AutoHtml", value: "false"}]
-}
+	html: {path: './basic2.html'},
+	connectionTimeout: 5000
+};
+
+//	headers: [{key: "X-MC-Autotext", value: "false"}, {key: "X-MC-AutoHtml", value: "false"}]
 
 // create express application
 app = express();
@@ -61,7 +62,7 @@ app.post('/teams/:id', function(req, resp) {
 app.post('/email', function(req, resp) {
 	console.log ("Send Email");
 
-	transporter.sendMail(mailOptions, function(error, info) {
+	transporter.sendMail(locals, function(error, info) {
 
 		if (error) {
 			console.log(error);
